@@ -233,7 +233,7 @@ public class UserAgent {
     
 
     public static boolean registraUsuario(String usuarioSIP, String IPProxy, int puertoescuchaProxy,
-    		int puertoEscuchaUsuario, DatagramSocket socket) {
+    		int puertoEscuchaUsuario, DatagramSocket socket1) {
 	    	
     		boolean registroCompletado = false;
     		
@@ -492,8 +492,8 @@ public class UserAgent {
 			puerto = puertoescuchaProxy;
 		}
 		else {
-			IP = destino[1];
-			puerto = Integer.parseInt(destino[2]);
+			IP = destino[0];
+			puerto = Integer.parseInt(destino[1]);
 		}
 		
 		ArrayList<String> viaUA = new ArrayList<String>();

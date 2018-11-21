@@ -57,10 +57,14 @@ public class Proxy {
 			InetAddress IPProxy = null;
 			try {
 				IPProxy = InetAddress.getLocalHost();
+				System.out.println(IPProxy);
+
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}
 			proxyIP = IPProxy.toString().split("/")[1];
+			System.out.println(proxyIP);
+
 			try {
 				socket = new DatagramSocket(puertoescuchaProxy,InetAddress.getByName(proxyIP));
 			} catch (UnknownHostException e) {
@@ -70,7 +74,7 @@ public class Proxy {
 			while(true) {
 
 				SIPMessage mensaje = mensajeNuevo (socket);
-
+				System.out.println(mensaje);
 				//Se ha recibido un mensaje tipo Register
 				if (mensaje instanceof RegisterMessage ) {
 					
@@ -159,7 +163,7 @@ public class Proxy {
 					estadoLlamado = "Completed";
 					System.out.println("El estado actual del llamado es: " + estadoLlamado + "\n");
 
-					String usuario = mensajeBusyHere.getFromUri();
+					String usuario = mensajeBusyHere.getFromUri().split(":")[1].split("@")[0];
 
 					String IPUsuario = null;
 					int puertoUsuario = 0;
@@ -182,7 +186,7 @@ public class Proxy {
 					estadoLlamado = "Completed";
 					System.out.println("El estado actual del llamado es: " + estadoLlamado + "\n");
 
-					String usuario = mensajeTimeout.getFromUri();
+					String usuario = mensajeTimeout.getFromUri().split(":")[1].split("@")[0];
 
 					String IPUsuario = null;
 					int puertoUsuario = 0;
@@ -430,7 +434,7 @@ public class Proxy {
 		mensajeServiceUnavailable.setcSeqNumber(Integer.toString(seqNumber+1));
 		mensajeServiceUnavailable.setVias(mensajeInvite.getVias());
 
-		String usuario = mensajeServiceUnavailable.getFromUri();
+		String usuario = mensajeServiceUnavailable.getFromUri().split(":")[1].split("@")[0];
 
 		String IPusuario = null;
 		int puertoUsuario = 0;
@@ -668,7 +672,8 @@ public class Proxy {
 		public static void gestionaMensajeACK(ACKMessage mensaje) {
 
 			String IPProxy = getIPProxy();
-			String usuario = mensaje.getToUri();
+			String usuario = mensaje.getToUri().split(":")[1].split("@")[0];
+
 			String IPUsuario = null;
 			int portUsuario = 0;
 
@@ -684,7 +689,8 @@ public class Proxy {
 				mensaje.setRoute(null);
 			mensaje.addVia(IPProxy + ":" + puertoescuchaProxy);
 			mensaje.setMaxForwards(mensaje.getMaxForwards()-1);
-
+			System.out.println(mensaje.toStringMessage());
+           
 			enviarMensajeSIP(mensaje, IPUsuario, portUsuario); 
 
 		}
@@ -693,7 +699,7 @@ public class Proxy {
 
 			String IPProxy = null;
 			try {
-				IPProxy = InetAddress.getLocalHost().getHostName();
+				IPProxy = InetAddress.getLocalHost().getHostAddress();
 			} catch (UnknownHostException exception) {
 				exception.printStackTrace();
 			}
@@ -736,7 +742,7 @@ public class Proxy {
 		public static void gestionaMensajeBYE(ByeMessage mensaje){
 
 			String IPProxy = getIPProxy();
-			String usuario = mensaje.getToUri();
+			String usuario = mensaje.getToUri().split(":")[1].split("@")[0];
 			String IPUsuario = null;
 			int portUsuario = 0;
 
@@ -796,7 +802,7 @@ public class Proxy {
 				}
 				mensajeACK.setVias(viaProxy);
 
-				String usuario = mensaje.getToUri();
+				String usuario = mensaje.getToUri().split(":")[1].split("@")[0];
 
 				for (int i=0 ; i<usuariosRegistrados.size(); i++) {
 					if (usuariosRegistrados.get(i).getNombreUsuario().equals(usuario) ) {
@@ -825,7 +831,7 @@ public class Proxy {
 				}
 				mensajeACK.setVias(viaProxy);
 
-				String usuario = mensaje.getToUri();
+				String usuario = mensaje.getToUri().split(":")[1].split("@")[0];
 
 				for (int i=0 ; i<usuariosRegistrados.size(); i++) {
 					System.out.println(usuariosRegistrados.get(i));
@@ -849,7 +855,7 @@ public class Proxy {
 			enviaACK(mensaje);
 
 			// Reenviar el Timeout al llamante (IP y puerto se obtienen del From)
-			String usuario = mensaje.getFromUri();
+			String usuario = mensaje.getFromUri().split(":")[1].split("@")[0];
 			String IPUsuario = null;
 			int puertoUsuario = 0;
 
